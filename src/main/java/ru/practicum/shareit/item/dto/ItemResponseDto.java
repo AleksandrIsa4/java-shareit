@@ -1,21 +1,21 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.item.dto;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.abstraction.BaseModel;
-import ru.practicum.shareit.user.model.User;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
-public class Item extends BaseModel<Long> {
+public class ItemResponseDto extends BaseModel<Long> {
 
     String name;
     String description;
     Boolean available;
-    User owner;
 
     public String getName() {
         return name;
@@ -39,24 +39,5 @@ public class Item extends BaseModel<Long> {
 
     public void setAvailable(Boolean available) {
         this.available = available;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public String toString() {
-        return "Item{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", available=" + available +
-                ", owner=" + owner +
-                ", id=" + id +
-                '}';
     }
 }
