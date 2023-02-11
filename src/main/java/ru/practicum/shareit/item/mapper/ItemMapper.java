@@ -15,8 +15,8 @@ public class ItemMapper {
         this.userService = userService;
     }
 
-    public static ItemResponseDto toDto (Item item) {
-        ItemResponseDto itemResponseDto=new ItemResponseDto();
+    public static ItemResponseDto toDto(Item item) {
+        ItemResponseDto itemResponseDto = new ItemResponseDto();
         itemResponseDto.setId(item.getId());
         itemResponseDto.setName(item.getName());
         itemResponseDto.setDescription(item.getDescription());
@@ -24,9 +24,9 @@ public class ItemMapper {
         return itemResponseDto;
     }
 
-    public static Item toEntity(ItemMessageDto dto,Long idUser,Long itemId){
-        Item item=new Item();
-        if (itemId==null){
+    public static Item toEntity(ItemMessageDto dto, Long idUser, Long itemId) {
+        Item item = new Item();
+        if (itemId == null) {
             item.setId(dto.getId());
         } else {
             item.setId(itemId);

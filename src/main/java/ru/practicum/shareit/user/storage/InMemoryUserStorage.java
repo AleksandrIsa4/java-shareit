@@ -16,7 +16,7 @@ public class InMemoryUserStorage implements UserStorage<User, Long> {
 
     private long generator = 0;
     private final Map<Long, User> users = new HashMap<>();
-    private final PatchMap<User> patchMap=new PatchMap<>();
+    private final PatchMap<User> patchMap = new PatchMap<>();
 
     @Override
     public User save(User user) {
@@ -29,7 +29,7 @@ public class InMemoryUserStorage implements UserStorage<User, Long> {
     @Override
     public User update(User user, Long id) {
         checkEmail(user.getEmail());
-        user=patchMap.patchObject(user,get(id));
+        user = patchMap.patchObject(user, get(id));
         users.put(user.getId(), user);
         return user;
     }

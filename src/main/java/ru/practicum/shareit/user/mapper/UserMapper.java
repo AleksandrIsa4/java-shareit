@@ -8,16 +8,16 @@ import ru.practicum.shareit.user.model.User;
 @Component
 public class UserMapper {
 
-    public static UserResponseDto toDto (User user) {
-        UserResponseDto userResponseDto=new UserResponseDto();
+    public static UserResponseDto toDto(User user) {
+        UserResponseDto userResponseDto = new UserResponseDto();
         userResponseDto.setId(user.getId());
         userResponseDto.setName(user.getName());
         userResponseDto.setEmail(user.getEmail());
         return userResponseDto;
     }
 
-    public static User toEntity(UserMessageDto dto){
-        User user=new User();
+    public static User toEntity(UserMessageDto dto) {
+        User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         return user;

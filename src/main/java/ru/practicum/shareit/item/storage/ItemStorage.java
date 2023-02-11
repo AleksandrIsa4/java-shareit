@@ -2,11 +2,11 @@ package ru.practicum.shareit.item.storage;
 
 import java.util.List;
 
-public interface ItemStorage<T,K> {
+public interface ItemStorage<T, K> {
 
     T save(T data);
 
-    T update(T data,K id);
+    T update(T data, K id);
 
     T get(K id);
 

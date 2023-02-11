@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PatchMapping(value = "/{userId}")
-        public UserResponseDto patch(@RequestBody UserMessageDto dto, @PathVariable("userId") @NotNull Long userId) {
+    public UserResponseDto patch(@RequestBody UserMessageDto dto, @PathVariable("userId") @NotNull Long userId) {
         User user = userMapper.toEntity(dto);
         user = userService.patch(user, userId);
         return userMapper.toDto(user);
@@ -51,6 +51,6 @@ public class UserController {
 
     @GetMapping
     public List<UserResponseDto> getAll() {
-            return  userService.getAll().stream().map(UserMapper::toDto).collect(Collectors.toList());
+        return userService.getAll().stream().map(UserMapper::toDto).collect(Collectors.toList());
     }
 }

@@ -30,18 +30,18 @@ public class ItemController {
             value = "X-Sharer-User-Id",
             required = true)
     long idUser) {
-        Item item = itemMapper.toEntity(dto, idUser,null);
+        Item item = itemMapper.toEntity(dto, idUser, null);
         item = itemService.save(item, idUser);
         return itemMapper.toDto(item);
     }
 
     @PatchMapping(value = "/{itemId}")
 
-        public ItemResponseDto patch(@RequestBody ItemMessageDto dto, @PathVariable("itemId") @NotNull Long itemId, @RequestHeader(
-                value = "X-Sharer-User-Id",
-                required = true)
-        long idUser) {
-        Item item = itemMapper.toEntity(dto, idUser,itemId);
+    public ItemResponseDto patch(@RequestBody ItemMessageDto dto, @PathVariable("itemId") @NotNull Long itemId, @RequestHeader(
+            value = "X-Sharer-User-Id",
+            required = true)
+    long idUser) {
+        Item item = itemMapper.toEntity(dto, idUser, itemId);
         item = itemService.patch(item, itemId);
         return itemMapper.toDto(item);
 
@@ -73,16 +73,15 @@ public class ItemController {
     }
 
     @GetMapping(value = "/search")
-    public List<ItemResponseDto> search(@RequestParam String text,@RequestHeader(
+    public List<ItemResponseDto> search(@RequestParam String text, @RequestHeader(
             value = "X-Sharer-User-Id",
             required = true)
     long idUser) {
-if (text == null || text.isEmpty() || text.trim().isEmpty())
-{
-    return new ArrayList<>();
-} else {
-    //   return new ArrayList<>();
-    return itemService.search(text).stream().map(ItemMapper::toDto).collect(Collectors.toList());
-}
+        if (text == null || text.isEmpty() || text.trim().isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            //   return new ArrayList<>();
+            return itemService.search(text).stream().map(ItemMapper::toDto).collect(Collectors.toList());
+        }
     }
 }

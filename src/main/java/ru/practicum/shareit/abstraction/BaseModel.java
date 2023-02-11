@@ -1,6 +1,6 @@
 package ru.practicum.shareit.abstraction;
 
-public abstract class BaseModel<T>  {
+public abstract class BaseModel<T> {
 
     protected T id;
 
