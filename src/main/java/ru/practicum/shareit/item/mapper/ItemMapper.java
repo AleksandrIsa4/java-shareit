@@ -4,16 +4,9 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.ItemMessageDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.service.UserService;
 
 @Component
 public class ItemMapper {
-
-    private static UserService userService;
-
-    public ItemMapper(UserService userService) {
-        this.userService = userService;
-    }
 
     public static ItemResponseDto toDto(Item item) {
         ItemResponseDto itemResponseDto = new ItemResponseDto();
@@ -24,7 +17,7 @@ public class ItemMapper {
         return itemResponseDto;
     }
 
-    public static Item toEntity(ItemMessageDto dto, Long idUser, Long itemId) {
+    public static Item toEntity(ItemMessageDto dto, Long itemId) {
         Item item = new Item();
         if (itemId == null) {
             item.setId(dto.getId());
@@ -34,7 +27,6 @@ public class ItemMapper {
         item.setName(dto.getName());
         item.setDescription(dto.getDescription());
         item.setAvailable(dto.isAvailable());
-        item.setOwner(userService.get(idUser));
         return item;
     }
 }

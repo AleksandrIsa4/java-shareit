@@ -19,10 +19,12 @@ public class ItemService {
     }
 
     public Item save(Item item, Long idUser) {
+        item.setOwner(userService.get(idUser));
         return storage.save(item);
     }
 
-    public Item patch(Item item, Long idItem) {
+    public Item patch(Item item, Long idItem, Long idUser) {
+        item.setOwner(userService.get(idUser));
         return storage.update(item, idItem);
     }
 

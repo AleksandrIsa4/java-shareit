@@ -29,9 +29,9 @@ public class InMemoryItemStorage implements ItemStorage<Item, Long> {
     @Override
     public Item update(Item item, Long id) {
         //  item=patchMap.patchObject2(item,get(id));
-        Long itemPatchId = item.getId();
-        Long itemPatchOwnerId = item.getOwner().getId();
-        Long itemOwnerId = get(id).getOwner().getId();
+        long itemPatchId = item.getId();
+        long itemPatchOwnerId = item.getOwner().getId();
+        long itemOwnerId = get(id).getOwner().getId();
         if ((itemPatchId == id) && (itemPatchOwnerId == itemOwnerId)) {
             item = patchMap.patchObject(item, get(id));
             items.put(item.getId(), item);

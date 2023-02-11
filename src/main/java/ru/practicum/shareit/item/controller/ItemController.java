@@ -30,21 +30,19 @@ public class ItemController {
             value = "X-Sharer-User-Id",
             required = true)
     long idUser) {
-        Item item = itemMapper.toEntity(dto, idUser, null);
+        Item item = itemMapper.toEntity(dto, null);
         item = itemService.save(item, idUser);
         return itemMapper.toDto(item);
     }
 
     @PatchMapping(value = "/{itemId}")
-
     public ItemResponseDto patch(@RequestBody ItemMessageDto dto, @PathVariable("itemId") @NotNull Long itemId, @RequestHeader(
             value = "X-Sharer-User-Id",
             required = true)
     long idUser) {
-        Item item = itemMapper.toEntity(dto, idUser, itemId);
-        item = itemService.patch(item, itemId);
+        Item item = itemMapper.toEntity(dto, itemId);
+        item = itemService.patch(item, itemId, idUser);
         return itemMapper.toDto(item);
-
     }
 
     @GetMapping(value = "/{itemId}")
