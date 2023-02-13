@@ -59,8 +59,7 @@ public class ItemController {
     }
 
     @GetMapping(value = "/search")
-    public List<ItemResponseDto> search(@RequestParam String text, @RequestHeader(HEADER)
-    long idUser) {
+    public List<ItemResponseDto> search(@RequestParam String text) {
         if (text == null || text.isEmpty() || text.trim().isEmpty()) {
             return new ArrayList<>();
         } else {
