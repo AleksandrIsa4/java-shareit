@@ -28,7 +28,10 @@ public class InMemoryUserStorage implements UserStorage<User, Long> {
 
     @Override
     public User update(User user, Long id) {
-        checkEmail(user.getEmail());
+        String emailUser=get(id).getEmail();
+        if(!(emailUser.equals(user.getEmail()))){
+            checkEmail(user.getEmail());
+        }
         user = patchMap.patchObject(user, get(id));
         users.put(user.getId(), user);
         return user;
