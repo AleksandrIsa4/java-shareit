@@ -1,12 +1,10 @@
 package ru.practicum.shareit.user.mapper;
 
-import org.springframework.stereotype.Component;
 import ru.practicum.shareit.user.dto.UserMessageDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.model.User;
 
-@Component
-public class UserMapper {
+public final class UserMapper {
 
     public static UserResponseDto toDto(User user) {
         UserResponseDto userResponseDto = new UserResponseDto();

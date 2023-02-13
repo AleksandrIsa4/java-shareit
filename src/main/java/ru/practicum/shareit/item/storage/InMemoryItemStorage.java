@@ -28,7 +28,6 @@ public class InMemoryItemStorage implements ItemStorage<Item, Long> {
 
     @Override
     public Item update(Item item, Long id) {
-        //  item=patchMap.patchObject2(item,get(id));
         long itemPatchId = item.getId();
         long itemPatchOwnerId = item.getOwner().getId();
         long itemOwnerId = get(id).getOwner().getId();
@@ -71,7 +70,7 @@ public class InMemoryItemStorage implements ItemStorage<Item, Long> {
         String searchName;
         String searchDescription;
         for (Item item : items.values()) {
-            if (item.isAvailable()) {
+            if (item.getAvailable()) {
                 searchName = item.getName().toLowerCase();
                 searchDescription = item.getDescription().toLowerCase();
                 if (searchDescription.contains(search) || searchName.contains(search)) {

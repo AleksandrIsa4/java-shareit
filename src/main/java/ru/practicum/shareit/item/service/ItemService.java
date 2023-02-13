@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
@@ -8,15 +10,12 @@ import ru.practicum.shareit.user.service.UserService;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ItemService {
 
+    @Autowired
     private final ItemStorage<Item, Long> storage;
     private final UserService userService;
-
-    public ItemService(ItemStorage<Item, Long> storage, UserService userService) {
-        this.storage = storage;
-        this.userService = userService;
-    }
 
     public Item save(Item item, Long idUser) {
         item.setOwner(userService.get(idUser));

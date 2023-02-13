@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemMessageDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
@@ -14,71 +16,54 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/items")
+@RequiredArgsConstructor
+@RequestMapping(value = "/items")
 public class ItemController {
 
+    private final static String HEADER = "X-Sharer-User-Id";
+    @Autowired
     private final ItemService itemService;
-    private final ItemMapper itemMapper;
-
-    public ItemController(ItemService itemService, ItemMapper itemMapper) {
-        this.itemService = itemService;
-        this.itemMapper = itemMapper;
-    }
 
     @PostMapping
-    public ItemResponseDto save(@Valid @RequestBody ItemMessageDto dto, @RequestHeader(
-            value = "X-Sharer-User-Id",
-            required = true)
+    public ItemResponseDto save(@Valid @RequestBody ItemMessageDto dto, @RequestHeader(HEADER)
     long idUser) {
-        Item item = itemMapper.toEntity(dto, null);
+        Item item = ItemMapper.toEntity(dto, null);
         item = itemService.save(item, idUser);
-        return itemMapper.toDto(item);
+        return ItemMapper.toDto(item);
     }
 
     @PatchMapping(value = "/{itemId}")
-    public ItemResponseDto patch(@RequestBody ItemMessageDto dto, @PathVariable("itemId") @NotNull Long itemId, @RequestHeader(
-            value = "X-Sharer-User-Id",
-            required = true)
+    public ItemResponseDto patch(@RequestBody ItemMessageDto dto, @PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER)
     long idUser) {
-        Item item = itemMapper.toEntity(dto, itemId);
+        Item item = ItemMapper.toEntity(dto, itemId);
         item = itemService.patch(item, itemId, idUser);
-        return itemMapper.toDto(item);
+        return ItemMapper.toDto(item);
     }
 
     @GetMapping(value = "/{itemId}")
-    public ItemResponseDto getItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(
-            value = "X-Sharer-User-Id",
-            required = true)
+    public ItemResponseDto getItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER)
     long idUser) {
         Item item = itemService.get(itemId, idUser);
-        return itemMapper.toDto(item);
+        return ItemMapper.toDto(item);
     }
 
     @DeleteMapping(value = "/{itemId}")
-    public void deleteItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(
-            value = "X-Sharer-User-Id",
-            required = true)
+    public void deleteItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER)
     long idUser) {
         itemService.delete(itemId, idUser);
     }
 
     @GetMapping
-    public List<ItemResponseDto> getAll(@RequestHeader(
-            value = "X-Sharer-User-Id",
-            required = true)
-                                        long idUser) {
+    public List<ItemResponseDto> getAll(@RequestHeader(HEADER) long idUser) {
         return itemService.getAll(idUser).stream().map(ItemMapper::toDto).collect(Collectors.toList());
     }
 
     @GetMapping(value = "/search")
-    public List<ItemResponseDto> search(@RequestParam String text, @RequestHeader(
-            value = "X-Sharer-User-Id",
-            required = true)
+    public List<ItemResponseDto> search(@RequestParam String text, @RequestHeader(HEADER)
     long idUser) {
         if (text == null || text.isEmpty() || text.trim().isEmpty()) {
             return new ArrayList<>();
         } else {
-            //   return new ArrayList<>();
             return itemService.search(text).stream().map(ItemMapper::toDto).collect(Collectors.toList());
         }
     }

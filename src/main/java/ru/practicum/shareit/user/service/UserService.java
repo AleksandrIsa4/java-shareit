@@ -1,5 +1,7 @@
 package ru.practicum.shareit.user.service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
@@ -7,13 +9,11 @@ import ru.practicum.shareit.user.storage.UserStorage;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
+    @Autowired
     private final UserStorage<User, Long> storage;
-
-    public UserService(UserStorage<User, Long> storage) {
-        this.storage = storage;
-    }
 
     public User save(User user) {
         return storage.save(user);

@@ -1,5 +1,7 @@
 package ru.practicum.shareit.user.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserMessageDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
@@ -13,35 +15,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = "/users")
 public class UserController {
 
+    @Autowired
     private final UserService userService;
-    private final UserMapper userMapper;
-
-    public UserController(UserService userService, UserMapper userMapper) {
-        this.userService = userService;
-        this.userMapper = userMapper;
-    }
 
     @PostMapping
     public UserResponseDto save(@Valid @RequestBody UserMessageDto dto) {
-        User user = userMapper.toEntity(dto);
+        User user = UserMapper.toEntity(dto);
         user = userService.save(user);
-        return userMapper.toDto(user);
+        return UserMapper.toDto(user);
     }
 
     @PatchMapping(value = "/{userId}")
     public UserResponseDto patch(@RequestBody UserMessageDto dto, @PathVariable("userId") @NotNull Long userId) {
-        User user = userMapper.toEntity(dto);
+        User user = UserMapper.toEntity(dto);
         user = userService.patch(user, userId);
-        return userMapper.toDto(user);
+        return UserMapper.toDto(user);
     }
 
     @GetMapping(value = "/{userId}")
     public UserResponseDto get(@PathVariable("userId") @NotNull Long userId) {
         User user = userService.get(userId);
-        return userMapper.toDto(user);
+        return UserMapper.toDto(user);
     }
 
     @DeleteMapping(value = "/{userId}")
