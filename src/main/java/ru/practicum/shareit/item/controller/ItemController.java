@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/items")
 public class ItemController {
 
-    private final String HEADER = "X-Sharer-User-Id";
+    private final String HEADER_REQUEST = "X-Sharer-User-Id";
     @Autowired
     private final ItemService itemService;
 
     @PostMapping
-    public ItemResponseDto save(@Valid @RequestBody ItemMessageDto dto, @RequestHeader(HEADER)
+    public ItemResponseDto save(@Valid @RequestBody ItemMessageDto dto, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         Item item = ItemMapper.toEntity(dto, null);
         item = itemService.save(item, idUser);
@@ -33,7 +33,7 @@ public class ItemController {
     }
 
     @PatchMapping(value = "/{itemId}")
-    public ItemResponseDto patch(@RequestBody ItemMessageDto dto, @PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER)
+    public ItemResponseDto patch(@RequestBody ItemMessageDto dto, @PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         Item item = ItemMapper.toEntity(dto, itemId);
         item = itemService.patch(item, itemId, idUser);
@@ -41,20 +41,20 @@ public class ItemController {
     }
 
     @GetMapping(value = "/{itemId}")
-    public ItemResponseDto getItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER)
+    public ItemResponseDto getItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         Item item = itemService.get(itemId, idUser);
         return ItemMapper.toDto(item);
     }
 
     @DeleteMapping(value = "/{itemId}")
-    public void deleteItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER)
+    public void deleteItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         itemService.delete(itemId, idUser);
     }
 
     @GetMapping
-    public List<ItemResponseDto> getAll(@RequestHeader(HEADER) long idUser) {
+    public List<ItemResponseDto> getAll(@RequestHeader(HEADER_REQUEST) long idUser) {
         return itemService.getAll(idUser).stream().map(ItemMapper::toDto).collect(Collectors.toList());
     }
 
