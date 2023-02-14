@@ -6,7 +6,8 @@ import ru.practicum.shareit.item.model.Item;
 
 public final class ItemMapper {
 
-    private ItemMapper(){}
+    private ItemMapper() {
+    }
 
     public static ItemResponseDto toDto(Item item) {
         ItemResponseDto itemResponseDto = new ItemResponseDto();
