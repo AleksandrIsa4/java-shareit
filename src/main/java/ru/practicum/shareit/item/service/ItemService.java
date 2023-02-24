@@ -99,7 +99,7 @@ public class ItemService {
     public Comment saveComment(Comment comment, Long idUser, Long itemId) {
         Item item = storage.findById(itemId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного предмета нет"));
         User author = userRepository.findById(idUser).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного пользователя нет"));
-        Booking booking = bookingRepository.findByBookerIdAndItemIdAndEndIsBefore(idUser, itemId, LocalDateTime.now());
+        Booking booking = bookingRepository.findTop1ByBookerIdAndItemIdAndEndIsBefore(idUser, itemId, LocalDateTime.now());
         if (booking == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "брони пользователем не было");
         }
