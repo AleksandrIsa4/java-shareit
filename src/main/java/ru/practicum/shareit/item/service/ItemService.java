@@ -44,9 +44,9 @@ public class ItemService {
     public Item patch(Item item, Long idItem, Long idUser) {
         item.setOwner(userService.get(idUser));
         Item itemFind = storage.findById(idItem).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного предмета нет"));
-        long itemPatchOwnerId = item.getOwner().getId();
-        long itemOwnerId = itemFind.getOwner().getId();
-        if (itemPatchOwnerId == itemOwnerId) {
+        Long itemPatchOwnerId = item.getOwner().getId();
+        Long itemOwnerId = itemFind.getOwner().getId();
+        if (itemPatchOwnerId.equals(itemOwnerId)) {
             item = patchMap.patchObject(item, itemFind);
             return storage.save(item);
         } else {
@@ -58,7 +58,7 @@ public class ItemService {
         userService.get(idUser);
         Item item = storage.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного предмета нет"));
         ItemResponseDto dto = ItemMapper.toDto(item);
-        if (item.getOwner().getId() == idUser) {
+        if (item.getOwner().getId().equals(idUser)) {
             Booking nextBooking = bookingRepository.findTop1ByItemIdAndStartIsAfterOrderByStartDesc(id, LocalDateTime.now());
             Booking lastBooking = bookingRepository.findTop1ByItemIdAndEndIsBeforeOrderByStartDesc(id, LocalDateTime.now());
             dto.setNextBooking(nextBooking == null ? null : BookingMapper.toDto(nextBooking));

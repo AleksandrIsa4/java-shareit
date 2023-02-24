@@ -27,7 +27,7 @@ public class BookingService {
     public Booking save(Booking booking, Long idUser, Long idItem) {
         Item item = itemRepository.findById(idItem).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного предмета нет"));
         long idItemOwner = item.getOwner().getId();
-        if (idUser == idItemOwner) {
+        if (idUser.equals(idItemOwner)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "пользователь является владельцем");
         }
         if (!item.getAvailable()) {
@@ -42,8 +42,8 @@ public class BookingService {
     public Booking patch(boolean approved, Long bookingId, Long idUser) {
         userService.get(idUser);
         Booking booking = get(bookingId, idUser);
-        long itemPatchOwnerId = booking.getItem().getOwner().getId();
-        if (idUser != itemPatchOwnerId) {
+        Long itemPatchOwnerId = booking.getItem().getOwner().getId();
+        if (!idUser.equals(itemPatchOwnerId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не владелец");
         }
         if ((booking.getStatus().equals(Status.APPROVED) && approved)
@@ -61,9 +61,9 @@ public class BookingService {
 
     public Booking get(Long bookingId, Long idUser) {
         Booking booking = storage.findById(bookingId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанной брони нет"));
-        long bookingBookerId = booking.getBooker().getId();
-        long bookingItemOwnerId = booking.getItem().getOwner().getId();
-        if (bookingBookerId == idUser || bookingItemOwnerId == idUser) {
+        Long bookingBookerId = booking.getBooker().getId();
+        Long bookingItemOwnerId = booking.getItem().getOwner().getId();
+        if (bookingBookerId.equals(idUser) || bookingItemOwnerId.equals(idUser)) {
             return booking;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "другой пользователь");
