@@ -48,7 +48,7 @@ public class DbConfig {
         return builder
                 .dataSource(dataSource)
                 .packages("ru.practicum.shareit")
-                .persistenceUnit("shareit")
+                .persistenceUnit("test")
                 .build();
     }
 
