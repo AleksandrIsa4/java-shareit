@@ -3,9 +3,13 @@ package ru.practicum.shareit.item.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentMessageDto;
+import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemMessageDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
+import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -43,8 +47,7 @@ public class ItemController {
     @GetMapping(value = "/{itemId}")
     public ItemResponseDto getItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
     long idUser) {
-        Item item = itemService.get(itemId, idUser);
-        return ItemMapper.toDto(item);
+        return itemService.get(itemId, idUser);
     }
 
     @DeleteMapping(value = "/{itemId}")
@@ -55,7 +58,7 @@ public class ItemController {
 
     @GetMapping
     public List<ItemResponseDto> getAll(@RequestHeader(HEADER_REQUEST) long idUser) {
-        return itemService.getAll(idUser).stream().map(ItemMapper::toDto).collect(Collectors.toList());
+        return itemService.getAll(idUser);
     }
 
     @GetMapping(value = "/search")
@@ -65,5 +68,13 @@ public class ItemController {
         } else {
             return itemService.search(text).stream().map(ItemMapper::toDto).collect(Collectors.toList());
         }
+    }
+
+    @PostMapping(value = "/{itemId}/comment")
+    public CommentResponseDto saveComment(@PathVariable("itemId") @NotNull Long itemId, @Valid @RequestBody CommentMessageDto dto, @RequestHeader(HEADER_REQUEST)
+    long idUser) {
+        Comment comment = CommentMapper.toEntity(dto);
+        comment = itemService.saveComment(comment, idUser, itemId);
+        return CommentMapper.toDto(comment);
     }
 }
