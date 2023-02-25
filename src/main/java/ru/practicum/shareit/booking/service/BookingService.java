@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.enumeration.State;
@@ -24,6 +25,7 @@ public class BookingService {
     private final ItemRepository itemRepository;
     private final UserService userService;
 
+    @Transactional
     public Booking save(Booking booking, Long idUser, Long idItem) {
         Item item = itemRepository.findById(idItem).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного предмета нет"));
         long idItemOwner = item.getOwner().getId();
@@ -39,6 +41,7 @@ public class BookingService {
         return storage.save(booking);
     }
 
+    @Transactional
     public Booking patch(boolean approved, Long bookingId, Long idUser) {
         userService.get(idUser);
         Booking booking = get(bookingId, idUser);
@@ -70,6 +73,7 @@ public class BookingService {
         }
     }
 
+    @Transactional
     public List<Booking> getAllBooker(Long idUser, State state) {
         userService.get(idUser);
         LocalDateTime now = LocalDateTime.now();
@@ -97,6 +101,7 @@ public class BookingService {
         return bokkingState;
     }
 
+    @Transactional
     public List<Booking> getAllOwner(Long idUser, State state) {
         userService.get(idUser);
         LocalDateTime now = LocalDateTime.now();

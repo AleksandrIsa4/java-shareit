@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingMessageDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 public class BookingController {
 
     static final String HEADER_REQUEST = "X-Sharer-User-Id";
-    @Autowired
+
     private final BookingService bookingService;
 
     private final Validator<BookingMessageDto> bookingDtoValidator;

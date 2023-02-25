@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.abstraction.PatchMap;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -41,6 +42,7 @@ public class ItemService {
         return storage.save(item);
     }
 
+    @Transactional
     public Item patch(Item item, Long idItem, Long idUser) {
         item.setOwner(userService.get(idUser));
         Item itemFind = storage.findById(idItem).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного предмета нет"));
@@ -54,6 +56,7 @@ public class ItemService {
         }
     }
 
+    @Transactional
     public ItemResponseDto get(Long id, Long idUser) {
         userService.get(idUser);
         Item item = storage.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного предмета нет"));
@@ -70,11 +73,13 @@ public class ItemService {
         return dto;
     }
 
+    @Transactional
     public void delete(Long id, Long idUser) {
         userService.get(idUser);
         storage.deleteById(id);
     }
 
+    @Transactional
     public List<ItemResponseDto> getAll(Long idUser) {
         userService.get(idUser);
         List<Item> items = storage.findAllByOwnerId(idUser);
@@ -96,6 +101,7 @@ public class ItemService {
         return storage.search(search);
     }
 
+    @Transactional
     public Comment saveComment(Comment comment, Long idUser, Long itemId) {
         Item item = storage.findById(itemId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного предмета нет"));
         User author = userRepository.findById(idUser).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного пользователя нет"));

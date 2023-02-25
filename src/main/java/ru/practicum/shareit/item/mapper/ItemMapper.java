@@ -1,14 +1,13 @@
 package ru.practicum.shareit.item.mapper;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.dto.ItemMessageDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.model.Item;
 
-
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ItemMapper {
-
-    private ItemMapper() {
-    }
 
     public static ItemResponseDto toDto(Item item) {
         ItemResponseDto itemResponseDto = new ItemResponseDto();
