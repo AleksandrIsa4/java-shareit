@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.abstraction.PatchMap;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.enumeration.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
@@ -62,8 +63,8 @@ public class ItemService {
         Item item = storage.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного предмета нет"));
         ItemResponseDto dto = ItemMapper.toDto(item);
         if (item.getOwner().getId().equals(idUser)) {
-            Booking nextBooking = bookingRepository.findTop1ByItemIdAndStartIsAfterOrderByStartDesc(id, LocalDateTime.now());
-            Booking lastBooking = bookingRepository.findTop1ByItemIdAndEndIsBeforeOrderByStartDesc(id, LocalDateTime.now());
+            Booking nextBooking = bookingRepository.findTop1ByItemIdAndStartIsAfterAndStatusIsOrderByStartAsc(id, LocalDateTime.now(), Status.APPROVED);
+            Booking lastBooking = bookingRepository.findTop1ByItemIdAndEndIsBeforeAndStatusIsOrderByStartDesc(id, LocalDateTime.now(), Status.APPROVED);
             dto.setNextBooking(nextBooking == null ? null : BookingMapper.toDto(nextBooking));
             dto.setLastBooking(lastBooking == null ? null : BookingMapper.toDto(lastBooking));
         }
@@ -85,8 +86,8 @@ public class ItemService {
         List<Item> items = storage.findAllByOwnerId(idUser);
         List<ItemResponseDto> dto = items.stream().sorted((o1, o2) -> o1.getId().compareTo(o2.getId())).map(ItemMapper::toDto).collect(Collectors.toList());
         for (ItemResponseDto dtoItemBooking : dto) {
-            Booking nextBooking = bookingRepository.findTop1ByItemIdAndStartIsAfterOrderByStartDesc(dtoItemBooking.getId(), LocalDateTime.now());
-            Booking lastBooking = bookingRepository.findTop1ByItemIdAndEndIsBeforeOrderByStartDesc(dtoItemBooking.getId(), LocalDateTime.now());
+            Booking nextBooking = bookingRepository.findTop1ByItemIdAndStartIsAfterAndStatusIsOrderByStartAsc(dtoItemBooking.getId(), LocalDateTime.now(), Status.APPROVED);
+            Booking lastBooking = bookingRepository.findTop1ByItemIdAndEndIsBeforeAndStatusIsOrderByStartDesc(dtoItemBooking.getId(), LocalDateTime.now(), Status.APPROVED);
             dtoItemBooking.setNextBooking(nextBooking == null ? null : BookingMapper.toDto(nextBooking));
             dtoItemBooking.setLastBooking(lastBooking == null ? null : BookingMapper.toDto(lastBooking));
             List<Comment> comments = commentRepository.findAllByItemId(dtoItemBooking.getId());
