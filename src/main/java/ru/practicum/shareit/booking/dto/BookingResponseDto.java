@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.model;
+package ru.practicum.shareit.booking.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -7,35 +7,22 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.abstraction.BaseModel;
 import ru.practicum.shareit.booking.model.enumeration.Status;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.user.model.User;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
-@Entity
-@Table(name = "bookings", schema = "public")
-public class Booking extends BaseModel<Long> {
+public class BookingResponseDto extends BaseModel<Long> {
 
-    @OneToOne
-    @JoinColumn(name = "item_id")
-    Item item;
-
-    @OneToOne
-    @JoinColumn(name = "booker_id")
+    ItemResponseDto item;
     User booker;
-
-    @Column(name = "start_date")
     LocalDateTime start;
-    @Column(name = "end_date")
     LocalDateTime end;
-
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
     Status status;
+    Long bookerId;
 
 }

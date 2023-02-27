@@ -1,10 +1,13 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.shareit.abstraction.PatchMap;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.storage.UserStorage;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 
@@ -12,26 +15,29 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private final UserStorage<User, Long> storage;
+    private final UserRepository storage;
+    private final PatchMap<User> patchMap = new PatchMap<>();
 
     public User save(User user) {
         return storage.save(user);
     }
 
+    @Transactional
     public User patch(User user, Long id) {
-        return storage.update(user, id);
+        User userFind = storage.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного пользователя нет"));
+        user = patchMap.patchObject(user, userFind);
+        return storage.save(user);
     }
 
     public User get(Long id) {
-        return storage.get(id);
+        return storage.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного пользователя нет"));
     }
 
     public void delete(Long id) {
-        storage.delete(id);
+        storage.deleteById(id);
     }
 
     public List<User> getAll() {
-        return storage.getAll();
+        return storage.findAll();
     }
 }
