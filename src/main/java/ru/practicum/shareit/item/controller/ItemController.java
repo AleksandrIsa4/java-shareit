@@ -13,6 +13,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +31,7 @@ public class ItemController {
     @PostMapping
     public ItemResponseDto save(@Valid @RequestBody ItemMessageDto dto, @RequestHeader(HEADER_REQUEST)
     long idUser) {
-        Item item = ItemMapper.toEntity(dto, null);
-        item = itemService.save(item, idUser);
-        return ItemMapper.toDto(item);
+        return itemService.save(dto, idUser);
     }
 
     @PatchMapping(value = "/{itemId}")
@@ -56,16 +55,20 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemResponseDto> getAll(@RequestHeader(HEADER_REQUEST) long idUser) {
-        return itemService.getAll(idUser);
+    public List<ItemResponseDto> getAll(@RequestHeader(HEADER_REQUEST) long idUser,
+                                        @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
+                                        @RequestParam(name = "size", defaultValue = "99") @Min(1) int size) {
+        return itemService.getAll(idUser, from, size);
     }
 
     @GetMapping(value = "/search")
-    public List<ItemResponseDto> search(@RequestParam String text) {
+    public List<ItemResponseDto> search(@RequestParam String text,
+                                        @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
+                                        @RequestParam(name = "size", defaultValue = "99") @Min(1) int size) {
         if (text == null || text.isEmpty() || text.trim().isEmpty()) {
             return new ArrayList<>();
         } else {
-            return itemService.search(text).stream().map(ItemMapper::toDto).collect(Collectors.toList());
+            return itemService.search(text, from, size).stream().map(ItemMapper::toDto).collect(Collectors.toList());
         }
     }
 

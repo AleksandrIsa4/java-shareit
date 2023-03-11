@@ -16,10 +16,8 @@ public class ItemResponseDto extends BaseModel<Long> {
     String name;
     String description;
     Boolean available;
-
     BookingResponseDto lastBooking;
-
     BookingResponseDto nextBooking;
-
     List<CommentResponseDto> comments;
+    Long requestId;
 }

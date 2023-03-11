@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +13,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.enumeration.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.dto.CommentResponseDto;
+import ru.practicum.shareit.item.dto.ItemMessageDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -18,11 +21,14 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,12 +41,19 @@ public class ItemService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
     private final PatchMap<Item> patchMap = new PatchMap<>();
 
-    public Item save(Item item, Long idUser) {
-
+    @Transactional
+    public ItemResponseDto save(ItemMessageDto dto, Long idUser) {
+        Item item = ItemMapper.toEntity(dto, null);
         item.setOwner(userService.get(idUser));
-        return storage.save(item);
+        if (dto.getRequestId() != null) {
+            ItemRequest itemRequest = itemRequestRepository.findById(dto.getRequestId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного запроса нет"));
+            item.setRequest(itemRequest);
+        }
+        item = storage.save(item);
+        return ItemMapper.toDto(item);
     }
 
     @Transactional
@@ -81,10 +94,11 @@ public class ItemService {
     }
 
     @Transactional
-    public List<ItemResponseDto> getAll(Long idUser) {
+    public List<ItemResponseDto> getAll(Long idUser, int from, int size) {
         userService.get(idUser);
-        List<Item> items = storage.findAllByOwnerId(idUser);
-        List<ItemResponseDto> dto = items.stream().sorted((o1, o2) -> o1.getId().compareTo(o2.getId())).map(ItemMapper::toDto).collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(from, size);
+        List<Item> items = storage.findAllByOwnerId(idUser, pageable);
+        List<ItemResponseDto> dto = items.stream().sorted(Comparator.comparing(Item::getId)).map(ItemMapper::toDto).collect(Collectors.toList());
         for (ItemResponseDto dtoItemBooking : dto) {
             Booking nextBooking = bookingRepository.findTop1ByItemIdAndStartIsAfterAndStatusIsOrderByStartAsc(dtoItemBooking.getId(), LocalDateTime.now(), Status.APPROVED);
             Booking lastBooking = bookingRepository.findTop1ByItemIdAndEndIsBeforeAndStatusIsOrderByStartDesc(dtoItemBooking.getId(), LocalDateTime.now(), Status.APPROVED);
@@ -97,15 +111,16 @@ public class ItemService {
         return dto;
     }
 
-    public List<Item> search(String text) {
+    public List<Item> search(String text, int from, int size) {
+        Pageable pageable = PageRequest.of(from, size);
         String search = text.toLowerCase();
-        return storage.search(search);
+        return storage.search(search, pageable);
     }
 
     @Transactional
     public Comment saveComment(Comment comment, Long idUser, Long itemId) {
         Item item = storage.findById(itemId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного предмета нет"));
-        User author = userRepository.findById(idUser).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного пользователя нет"));
+        User author = userService.get(idUser);
         Booking booking = bookingRepository.findTop1ByBookerIdAndItemIdAndEndIsBefore(idUser, itemId, LocalDateTime.now());
         if (booking == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "брони пользователем не было");
