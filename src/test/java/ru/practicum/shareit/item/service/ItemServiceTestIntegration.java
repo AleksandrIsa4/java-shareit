@@ -69,6 +69,14 @@ public class ItemServiceTestIntegration {
     }
 
     @Test
+    void patchTestWrong() {
+        itemService.save(itemMessageDto1, 1L);
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
+            itemService.patch(item2, 1L, 2L);
+        });
+    }
+
+    @Test
     void getTest() {
         itemService.save(itemMessageDto1, 1L);
         itemService.save(itemMessageDto2, 1L);

@@ -46,7 +46,7 @@ public class BookingService {
     @Transactional
     public Booking patch(boolean approved, Long bookingId, Long idUser) {
         userService.get(idUser);
-        Booking booking = get(bookingId, idUser);
+        Booking booking = storage.findById(bookingId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанной брони нет"));
         Long itemPatchOwnerId = booking.getItem().getOwner().getId();
         if (!idUser.equals(itemPatchOwnerId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не владелец");
@@ -60,8 +60,6 @@ public class BookingService {
         } else {
             booking.setStatus(Status.REJECTED);
         }
-        //   storage.save(booking);
-        //  return get(bookingId, idUser);
         return storage.save(booking);
     }
 

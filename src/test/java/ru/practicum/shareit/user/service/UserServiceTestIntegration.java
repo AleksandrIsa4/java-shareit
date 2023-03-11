@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -35,13 +36,30 @@ public class UserServiceTestIntegration {
         userService.save(user1);
         User userTest = userService.patch(user2, 1L);
         Assertions.assertEquals(user2, userTest);
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
+            userService.patch(user2, 5L);
+        });
     }
 
     @Test
     void getTest() {
         userService.save(user1);
         User userTest = userService.get(1L);
-        Assertions.assertEquals(user1, userTest);
+        user1.equals(user2);
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(user1, userTest),
+                () -> Assertions.assertEquals(userTest.getId(), userTest.getId()),
+                () -> Assertions.assertThrows(RuntimeException.class, () -> userService.get(5L))
+                //     () -> Assertions.assertThrows(ResponseStatusException.class, () -> {
+                //         userService.get(5L);
+                //      })
+        );
+
+    }
+
+    @Test
+    void getTestWrong() {
+        Assertions.assertThrows(RuntimeException.class, () -> userService.get(5L));
     }
 
     @Test
@@ -52,7 +70,6 @@ public class UserServiceTestIntegration {
         List<User> usersTest = userService.getAll();
         Assertions.assertEquals(usersTest, users);
     }
-
 
     @Test
     void deleteTest() {

@@ -24,7 +24,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -39,7 +38,6 @@ public class ItemService {
     private final ItemRepository storage;
     private final UserService userService;
     private final BookingRepository bookingRepository;
-    private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final ItemRequestRepository itemRequestRepository;
     private final PatchMap<Item> patchMap = new PatchMap<>();
@@ -58,11 +56,10 @@ public class ItemService {
 
     @Transactional
     public Item patch(Item item, Long idItem, Long idUser) {
-        item.setOwner(userService.get(idUser));
+        userService.get(idUser);
         Item itemFind = storage.findById(idItem).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанного предмета нет"));
-        Long itemPatchOwnerId = item.getOwner().getId();
         Long itemOwnerId = itemFind.getOwner().getId();
-        if (itemPatchOwnerId.equals(itemOwnerId)) {
+        if (idUser.equals(itemOwnerId)) {
             item = patchMap.patchObject(item, itemFind);
             return storage.save(item);
         } else {

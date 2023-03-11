@@ -47,6 +47,11 @@ class UserServiceTest {
                 .thenReturn(user2);
         User user3 = userService.patch(user, user.getId());
         Assertions.assertEquals(user3, user2);
+        Mockito.when(mockUserRepository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.empty());
+        Exception exception = Assertions.assertThrows(RuntimeException.class,
+                () -> userService.patch(user, user.getId()));
+        Assertions.assertEquals("404 NOT_FOUND \"указанного пользователя нет\"", exception.getMessage());
     }
 
     @Test
@@ -55,6 +60,17 @@ class UserServiceTest {
                 .thenReturn(Optional.of(user));
         User user2 = userService.get(user.getId());
         Assertions.assertEquals(user, user2);
+        Mockito.when(mockUserRepository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.empty());
+        Exception exception = Assertions.assertThrows(RuntimeException.class,
+                () -> userService.get(1L));
+        Assertions.assertEquals("404 NOT_FOUND \"указанного пользователя нет\"", exception.getMessage());
+    }
+
+    @Test
+    void deleteTest() {
+        Mockito.doNothing().when(mockUserRepository).deleteById(Mockito.anyLong());
+        userService.delete(1L);
     }
 
     @Test

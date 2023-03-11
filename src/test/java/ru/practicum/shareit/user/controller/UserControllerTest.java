@@ -128,4 +128,16 @@ class UserControllerTest {
         Mockito.verify(userService, Mockito.times(1))
                 .getAll();
     }
+
+    @Test
+    void deleteTest() throws Exception {
+        Mockito.doNothing().when(userService).delete(Mockito.anyLong());
+        mockMvc.perform(delete("/users/1")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        Mockito.verify(userService, Mockito.times(1))
+                .delete(Mockito.anyLong());
+    }
 }

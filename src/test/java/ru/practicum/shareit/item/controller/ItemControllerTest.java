@@ -22,6 +22,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -153,6 +154,21 @@ class ItemControllerTest {
     }
 
     @Test
+    void searchTestEmpty() throws Exception {
+        when(itemService.search(anyString(), anyInt(), anyInt()))
+                .thenReturn(new ArrayList<>());
+        mockMvc.perform(get("/items/search?text=''")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.hasSize(0)));
+        Mockito.verify(itemService, Mockito.times(1))
+                .search(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt());
+    }
+
+    @Test
     void saveCommentTest() throws Exception {
         LocalDateTime time = LocalDateTime.now();
         Comment comment = new Comment("comment1", item1, user, time);
@@ -169,5 +185,28 @@ class ItemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text", is(commentResponseDto.getText()), String.class))
                 .andExpect(jsonPath("$.authorName", is(commentResponseDto.getAuthorName()), String.class));
+    }
+
+    @Test
+    void deleteTest() throws Exception {
+        Mockito.doNothing().when(itemService).delete(Mockito.anyLong(), Mockito.anyLong());
+        mockMvc.perform(delete("/items/1")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        Mockito.verify(itemService, Mockito.times(1))
+                .delete(Mockito.anyLong(), Mockito.anyLong());
+    }
+
+    @Test
+    void deleteTestWrongUser() throws Exception {
+        Mockito.doNothing().when(itemService).delete(Mockito.anyLong(), Mockito.anyLong());
+        mockMvc.perform(delete("/items/1")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
     }
 }

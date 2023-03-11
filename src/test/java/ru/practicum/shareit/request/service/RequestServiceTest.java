@@ -111,6 +111,18 @@ class RequestServiceTest {
     }
 
     @Test
+    void getRequestWrong() {
+        Mockito.when(userService.get(Mockito.anyLong()))
+                .thenReturn(user);
+        Mockito.when(itemRequestRepository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.empty());
+        Optional<ItemRequest> itemRequest = itemRequestRepository.findById(5L);
+        Exception exception = Assertions.assertThrows(RuntimeException.class,
+                () -> requestService.getRequest(5L, 1L));
+        Assertions.assertEquals("404 NOT_FOUND \"указанного запроса нет\"", exception.getMessage());
+    }
+
+    @Test
     void getAllPagination() {
         Mockito.when(userService.get(Mockito.anyLong()))
                 .thenReturn(user);
