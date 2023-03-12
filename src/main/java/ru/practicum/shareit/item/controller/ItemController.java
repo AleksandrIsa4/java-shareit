@@ -35,7 +35,7 @@ public class ItemController {
     }
 
     @PatchMapping(value = "/{itemId}")
-    public ItemResponseDto patch(@RequestBody ItemMessageDto dto, @PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
+    public ItemResponseDto patch(@RequestBody ItemMessageDto dto, @PathVariable() @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         Item item = ItemMapper.toEntity(dto, itemId);
         item = itemService.patch(item, itemId, idUser);
@@ -43,13 +43,13 @@ public class ItemController {
     }
 
     @GetMapping(value = "/{itemId}")
-    public ItemResponseDto getItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
+    public ItemResponseDto getItem(@PathVariable() @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         return itemService.get(itemId, idUser);
     }
 
     @DeleteMapping(value = "/{itemId}")
-    public void deleteItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
+    public void deleteItem(@PathVariable() @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         itemService.delete(itemId, idUser);
     }
@@ -73,7 +73,7 @@ public class ItemController {
     }
 
     @PostMapping(value = "/{itemId}/comment")
-    public CommentResponseDto saveComment(@PathVariable("itemId") @NotNull Long itemId, @Valid @RequestBody CommentMessageDto dto, @RequestHeader(HEADER_REQUEST)
+    public CommentResponseDto saveComment(@PathVariable() @NotNull Long itemId, @Valid @RequestBody CommentMessageDto dto, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         Comment comment = CommentMapper.toEntity(dto);
         comment = itemService.saveComment(comment, idUser, itemId);

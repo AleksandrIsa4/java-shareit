@@ -1,6 +1,8 @@
 package ru.practicum.shareit.user.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,14 +13,15 @@ import java.util.List;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserServiceTestIntegration {
 
-    private final UserService userService;
-    private User user1;
-    private User user2;
+    final UserService userService;
+    User user1;
+    User user2;
 
     @BeforeEach
-    void setUp() {
+    void init() {
         user1 = new User("NameTest", "test@test.ru");
         user1.setId(1L);
         user2 = new User("NameTest2", "test@test.ru2");
@@ -50,11 +53,7 @@ public class UserServiceTestIntegration {
                 () -> Assertions.assertEquals(user1, userTest),
                 () -> Assertions.assertEquals(userTest.getId(), userTest.getId()),
                 () -> Assertions.assertThrows(RuntimeException.class, () -> userService.get(5L))
-                //     () -> Assertions.assertThrows(ResponseStatusException.class, () -> {
-                //         userService.get(5L);
-                //      })
         );
-
     }
 
     @Test

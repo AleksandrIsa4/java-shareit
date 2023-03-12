@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +22,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class ItemServiceTest {
 
     @Mock
@@ -37,8 +39,6 @@ class ItemServiceTest {
     UserService userService;
     @Mock
     BookingRepository bookingRepository;
-    @Mock
-    UserRepository userRepository;
     @Mock
     CommentRepository commentRepository;
     @Mock
@@ -55,7 +55,7 @@ class ItemServiceTest {
     ItemRequest itemRequest1;
 
     @BeforeEach
-    void setUp() {
+    void init() {
         itemService = new ItemService(mockItemRepository,
                 userService,
                 bookingRepository,

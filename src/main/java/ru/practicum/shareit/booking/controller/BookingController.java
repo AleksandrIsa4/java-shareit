@@ -40,14 +40,14 @@ public class BookingController {
     }
 
     @PatchMapping(value = "/{bookingId}")
-    public BookingResponseDto patch(@PathVariable("bookingId") @NotNull Long bookingId, @RequestHeader(HEADER_REQUEST)
+    public BookingResponseDto patch(@PathVariable() @NotNull Long bookingId, @RequestHeader(HEADER_REQUEST)
     long idUser, @RequestParam @NotNull boolean approved) {
         Booking booking = bookingService.patch(approved, bookingId, idUser);
         return BookingMapper.toDto(booking);
     }
 
     @GetMapping(value = "/{bookingId}")
-    public BookingResponseDto getBooking(@PathVariable("bookingId") @NotNull Long bookingId, @RequestHeader(HEADER_REQUEST)
+    public BookingResponseDto getBooking(@PathVariable() @NotNull Long bookingId, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         Booking booking = bookingService.get(bookingId, idUser);
         return BookingMapper.toDto(booking);

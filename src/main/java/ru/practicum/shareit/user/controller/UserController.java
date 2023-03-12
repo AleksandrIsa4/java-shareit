@@ -28,20 +28,20 @@ public class UserController {
     }
 
     @PatchMapping(value = "/{userId}")
-    public UserResponseDto patch(@RequestBody UserMessageDto dto, @PathVariable("userId") @NotNull Long userId) {
+    public UserResponseDto patch(@RequestBody UserMessageDto dto, @PathVariable() @NotNull Long userId) {
         User user = UserMapper.toEntity(dto);
         user = userService.patch(user, userId);
         return UserMapper.toDto(user);
     }
 
     @GetMapping(value = "/{userId}")
-    public UserResponseDto get(@PathVariable("userId") @NotNull Long userId) {
+    public UserResponseDto get(@PathVariable() @NotNull Long userId) {
         User user = userService.get(userId);
         return UserMapper.toDto(user);
     }
 
     @DeleteMapping(value = "/{userId}")
-    public void delete(@PathVariable("userId") @NotNull Long userId) {
+    public void delete(@PathVariable() @NotNull Long userId) {
         userService.delete(userId);
     }
 

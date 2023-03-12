@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,11 +25,12 @@ import java.util.List;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemServiceTestIntegration {
 
-    private final ItemService itemService;
-    private final UserService userService;
-    private final BookingService bookingService;
+    final ItemService itemService;
+    final UserService userService;
+    final BookingService bookingService;
     ItemResponseDto itemResponseDto1;
     ItemMessageDto itemMessageDto1;
     ItemResponseDto itemResponseDto2;
@@ -37,7 +40,7 @@ public class ItemServiceTestIntegration {
     User user;
 
     @BeforeEach
-    void setUp() {
+    void init() {
         itemResponseDto1 = new ItemResponseDto("item1", "description Item1", true, null, null, null, null);
         itemMessageDto1 = new ItemMessageDto("item1", "description Item1", true, null);
         itemResponseDto2 = new ItemResponseDto("item2", "description Item2", false, null, null, null, null);

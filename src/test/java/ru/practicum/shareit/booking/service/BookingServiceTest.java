@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,8 +11,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.shareit.booking.dto.BookingMessageDto;
-import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.enumeration.State;
 import ru.practicum.shareit.booking.model.enumeration.Status;
@@ -27,6 +27,7 @@ import java.util.Optional;
 
 
 @ExtendWith(MockitoExtension.class)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class BookingServiceTest {
 
     @Mock
@@ -37,10 +38,6 @@ class BookingServiceTest {
     BookingRepository bookingRepository;
     @Mock
     ItemRepository itemRepository;
-    BookingResponseDto bookingResponseDto1;
-    BookingMessageDto bookingMessageDto1;
-    BookingResponseDto bookingResponseDto2;
-    BookingMessageDto bookingMessageDto2;
     ItemResponseDto itemResponseDto2;
     ItemResponseDto itemResponseDto1;
     Item item1;
@@ -51,7 +48,7 @@ class BookingServiceTest {
     Booking booking2;
 
     @BeforeEach
-    void setUp() {
+    void init() {
         bookingService = new BookingService(bookingRepository,
                 itemRepository,
                 userService);
@@ -71,10 +68,6 @@ class BookingServiceTest {
         booking1.setId(1L);
         booking2 = new Booking(item2, user2, LocalDateTime.now().plusSeconds(1), LocalDateTime.now().plusSeconds(2), Status.APPROVED);
         booking2.setId(2L);
-        bookingResponseDto1 = new BookingResponseDto(itemResponseDto1, user2, LocalDateTime.now().plusSeconds(5), LocalDateTime.now().plusSeconds(6), Status.WAITING, 2L);
-        bookingResponseDto2 = new BookingResponseDto(itemResponseDto2, user2, LocalDateTime.now().plusSeconds(5), LocalDateTime.now().plusSeconds(6), Status.APPROVED, 2L);
-        bookingMessageDto1 = new BookingMessageDto(1L, LocalDateTime.now().plusSeconds(1), LocalDateTime.now().plusSeconds(2));
-        bookingMessageDto2 = new BookingMessageDto(2L, LocalDateTime.now().plusSeconds(1), LocalDateTime.now().plusSeconds(2));
     }
 
     @Test
@@ -189,6 +182,5 @@ class BookingServiceTest {
                 .thenReturn(List.of(booking1));
         List<Booking> bookingTest6 = bookingService.getAllOwner(2L, State.REJECTED, 0, 9);
         Assertions.assertEquals(bookingTest6, bookingList);
-
     }
 }

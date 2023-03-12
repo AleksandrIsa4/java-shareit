@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ItemController.class)
 @AutoConfigureMockMvc
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class ItemControllerTest {
 
     static final String HEADER_REQUEST = "X-Sharer-User-Id";
@@ -55,7 +58,7 @@ class ItemControllerTest {
     User user;
 
     @BeforeEach
-    void setUp() {
+    void init() {
         itemResponseDto1 = new ItemResponseDto("item1", "description Item1", true, null, null, null, null);
         itemMessageDto1 = new ItemMessageDto("item1", "description Item1", true, null);
         itemResponseDto2 = new ItemResponseDto("item2", "description Item2", false, null, null, null, null);

@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,23 +35,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(BookingController.class)
 @AutoConfigureMockMvc
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class BookingControllerTest {
 
     static final String HEADER_REQUEST = "X-Sharer-User-Id";
-
     @MockBean
     BookingService bookingService;
     @MockBean
     Validator<BookingMessageDto> bookingDtoValidator;
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     ObjectMapper mapper;
     BookingResponseDto bookingResponseDto1;
     BookingMessageDto bookingMessageDto1;
     BookingResponseDto bookingResponseDto2;
-    BookingMessageDto bookingMessageDto2;
     ItemResponseDto itemResponseDto2;
     ItemResponseDto itemResponseDto1;
     Item item1;
@@ -60,7 +60,7 @@ class BookingControllerTest {
     Booking booking2;
 
     @BeforeEach
-    void setUp() {
+    void init() {
         itemResponseDto1 = new ItemResponseDto("item1", "description Item1", true, null, null, null, null);
         itemResponseDto2 = new ItemResponseDto("item2", "description Item2", false, null, null, null, null);
         itemResponseDto1.setId(1L);
@@ -80,7 +80,6 @@ class BookingControllerTest {
         bookingResponseDto1 = new BookingResponseDto(itemResponseDto1, user2, LocalDateTime.now().plusSeconds(5), LocalDateTime.now().plusSeconds(6), Status.APPROVED, 2L);
         bookingResponseDto2 = new BookingResponseDto(itemResponseDto2, user2, LocalDateTime.now().plusSeconds(5), LocalDateTime.now().plusSeconds(6), Status.APPROVED, 2L);
         bookingMessageDto1 = new BookingMessageDto(1L, LocalDateTime.now().plusSeconds(1), LocalDateTime.now().plusSeconds(2));
-        bookingMessageDto2 = new BookingMessageDto(2L, LocalDateTime.now().plusSeconds(1), LocalDateTime.now().plusSeconds(2));
     }
 
     @Test

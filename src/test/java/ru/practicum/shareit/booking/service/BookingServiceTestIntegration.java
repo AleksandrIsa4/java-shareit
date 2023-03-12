@@ -1,13 +1,13 @@
 package ru.practicum.shareit.booking.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.practicum.shareit.booking.dto.BookingMessageDto;
-import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.enumeration.State;
 import ru.practicum.shareit.booking.model.enumeration.Status;
@@ -23,15 +23,12 @@ import java.util.List;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookingServiceTestIntegration {
 
-    private final ItemService itemService;
-    private final UserService userService;
-    private final BookingService bookingService;
-    BookingResponseDto bookingResponseDto1;
-    BookingMessageDto bookingMessageDto1;
-    BookingResponseDto bookingResponseDto2;
-    BookingMessageDto bookingMessageDto2;
+    final ItemService itemService;
+    final UserService userService;
+    final BookingService bookingService;
     ItemResponseDto itemResponseDto2;
     ItemResponseDto itemResponseDto1;
     ItemMessageDto itemMessageDto1;
@@ -44,7 +41,7 @@ public class BookingServiceTestIntegration {
     Booking booking2;
 
     @BeforeEach
-    void setUp() {
+    void init() {
         itemResponseDto1 = new ItemResponseDto("item1", "description Item1", true, null, null, null, null);
         itemResponseDto2 = new ItemResponseDto("item2", "description Item2", false, null, null, null, null);
         itemMessageDto1 = new ItemMessageDto("item1", "description Item1", true, null);
@@ -69,10 +66,6 @@ public class BookingServiceTestIntegration {
         booking1.setId(1L);
         booking2 = new Booking(item2, user2, LocalDateTime.now().plusSeconds(1), LocalDateTime.now().plusSeconds(2), Status.APPROVED);
         booking2.setId(2L);
-        bookingResponseDto1 = new BookingResponseDto(itemResponseDto1, user2, LocalDateTime.now().plusSeconds(5), LocalDateTime.now().plusSeconds(6), Status.WAITING, 2L);
-        bookingResponseDto2 = new BookingResponseDto(itemResponseDto2, user2, LocalDateTime.now().plusSeconds(5), LocalDateTime.now().plusSeconds(6), Status.APPROVED, 2L);
-        bookingMessageDto1 = new BookingMessageDto(1L, LocalDateTime.now().plusSeconds(1), LocalDateTime.now().plusSeconds(2));
-        bookingMessageDto2 = new BookingMessageDto(2L, LocalDateTime.now().plusSeconds(1), LocalDateTime.now().plusSeconds(2));
     }
 
     @Test

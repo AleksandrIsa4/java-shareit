@@ -1,5 +1,7 @@
 package ru.practicum.shareit.user.service;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class UserServiceTest {
 
     UserService userService;
@@ -23,7 +26,7 @@ class UserServiceTest {
     private User user;
 
     @BeforeEach
-    void setUp() {
+    void init() {
         userService = new UserService(mockUserRepository);
         user = new User("NameTest", "test@test.ru");
         user.setId(1L);
