@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +46,7 @@ public class BookingService {
     @Transactional
     public Booking patch(boolean approved, Long bookingId, Long idUser) {
         userService.get(idUser);
-        Booking booking = get(bookingId, idUser);
+        Booking booking = storage.findById(bookingId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "указанной брони нет"));
         Long itemPatchOwnerId = booking.getItem().getOwner().getId();
         if (!idUser.equals(itemPatchOwnerId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не владелец");
@@ -58,8 +60,7 @@ public class BookingService {
         } else {
             booking.setStatus(Status.REJECTED);
         }
-        storage.save(booking);
-        return get(bookingId, idUser);
+        return storage.save(booking);
     }
 
     public Booking get(Long bookingId, Long idUser) {
@@ -73,57 +74,59 @@ public class BookingService {
         }
     }
 
-    @Transactional
-    public List<Booking> getAllBooker(Long idUser, State state) {
+    @Transactional(readOnly = true)
+    public List<Booking> getAllBooker(Long idUser, State state, int from, int size) {
         userService.get(idUser);
         LocalDateTime now = LocalDateTime.now();
+        Pageable pageable = PageRequest.of(from / size, size);
         List<Booking> bokkingState = new ArrayList<>();
         switch (state) {
             case ALL:
-                bokkingState = storage.findAllByBookerIdOrderByStartDesc(idUser);
+                bokkingState = storage.findAllByBookerIdOrderByStartDesc(idUser, pageable);
                 break;
             case CURRENT:
-                bokkingState = storage.findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(idUser, now, now);
+                bokkingState = storage.findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(idUser, now, now, pageable);
                 break;
             case PAST:
-                bokkingState = storage.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(idUser, now);
+                bokkingState = storage.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(idUser, now, pageable);
                 break;
             case FUTURE:
-                bokkingState = storage.findAllByBookerIdAndStartIsAfterOrderByStartDesc(idUser, now);
+                bokkingState = storage.findAllByBookerIdAndStartIsAfterOrderByStartDesc(idUser, now, pageable);
                 break;
             case WAITING:
-                bokkingState = storage.findAllByBookerIdAndStatusIsOrderByStartDesc(idUser, Status.WAITING);
+                bokkingState = storage.findAllByBookerIdAndStatusIsOrderByStartDesc(idUser, Status.WAITING, pageable);
                 break;
             case REJECTED:
-                bokkingState = storage.findAllByBookerIdAndStatusIsOrderByStartDesc(idUser, Status.REJECTED);
+                bokkingState = storage.findAllByBookerIdAndStatusIsOrderByStartDesc(idUser, Status.REJECTED, pageable);
                 break;
         }
         return bokkingState;
     }
 
-    @Transactional
-    public List<Booking> getAllOwner(Long idUser, State state) {
+    @Transactional(readOnly = true)
+    public List<Booking> getAllOwner(Long idUser, State state, int from, int size) {
         userService.get(idUser);
         LocalDateTime now = LocalDateTime.now();
+        Pageable pageable = PageRequest.of(from, size);
         List<Booking> bokkingState = new ArrayList<>();
         switch (state) {
             case ALL:
-                bokkingState = storage.findAllByItemOwnerIdOrderByStartDesc(idUser);
+                bokkingState = storage.findAllByItemOwnerIdOrderByStartDesc(idUser, pageable);
                 break;
             case CURRENT:
-                bokkingState = storage.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(idUser, now, now);
+                bokkingState = storage.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(idUser, now, now, pageable);
                 break;
             case PAST:
-                bokkingState = storage.findAllByItemOwnerIdAndEndIsBeforeOrderByStartDesc(idUser, now);
+                bokkingState = storage.findAllByItemOwnerIdAndEndIsBeforeOrderByStartDesc(idUser, now, pageable);
                 break;
             case FUTURE:
-                bokkingState = storage.findAllByItemOwnerIdAndStartIsAfterOrderByStartDesc(idUser, now);
+                bokkingState = storage.findAllByItemOwnerIdAndStartIsAfterOrderByStartDesc(idUser, now, pageable);
                 break;
             case WAITING:
-                bokkingState = storage.findAllByItemOwnerIdAndStatusIsOrderByStartDesc(idUser, Status.WAITING);
+                bokkingState = storage.findAllByItemOwnerIdAndStatusIsOrderByStartDesc(idUser, Status.WAITING, pageable);
                 break;
             case REJECTED:
-                bokkingState = storage.findAllByItemOwnerIdAndStatusIsOrderByStartDesc(idUser, Status.REJECTED);
+                bokkingState = storage.findAllByItemOwnerIdAndStatusIsOrderByStartDesc(idUser, Status.REJECTED, pageable);
                 break;
         }
         return bokkingState;

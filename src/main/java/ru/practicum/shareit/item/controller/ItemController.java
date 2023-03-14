@@ -13,6 +13,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +31,11 @@ public class ItemController {
     @PostMapping
     public ItemResponseDto save(@Valid @RequestBody ItemMessageDto dto, @RequestHeader(HEADER_REQUEST)
     long idUser) {
-        Item item = ItemMapper.toEntity(dto, null);
-        item = itemService.save(item, idUser);
-        return ItemMapper.toDto(item);
+        return itemService.save(dto, idUser);
     }
 
     @PatchMapping(value = "/{itemId}")
-    public ItemResponseDto patch(@RequestBody ItemMessageDto dto, @PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
+    public ItemResponseDto patch(@RequestBody ItemMessageDto dto, @PathVariable() @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         Item item = ItemMapper.toEntity(dto, itemId);
         item = itemService.patch(item, itemId, idUser);
@@ -44,33 +43,37 @@ public class ItemController {
     }
 
     @GetMapping(value = "/{itemId}")
-    public ItemResponseDto getItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
+    public ItemResponseDto getItem(@PathVariable() @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         return itemService.get(itemId, idUser);
     }
 
     @DeleteMapping(value = "/{itemId}")
-    public void deleteItem(@PathVariable("itemId") @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
+    public void deleteItem(@PathVariable() @NotNull Long itemId, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         itemService.delete(itemId, idUser);
     }
 
     @GetMapping
-    public List<ItemResponseDto> getAll(@RequestHeader(HEADER_REQUEST) long idUser) {
-        return itemService.getAll(idUser);
+    public List<ItemResponseDto> getAll(@RequestHeader(HEADER_REQUEST) long idUser,
+                                        @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
+                                        @RequestParam(name = "size", defaultValue = "99") @Min(1) int size) {
+        return itemService.getAll(idUser, from, size);
     }
 
     @GetMapping(value = "/search")
-    public List<ItemResponseDto> search(@RequestParam String text) {
+    public List<ItemResponseDto> search(@RequestParam String text,
+                                        @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
+                                        @RequestParam(name = "size", defaultValue = "99") @Min(1) int size) {
         if (text == null || text.isEmpty() || text.trim().isEmpty()) {
             return new ArrayList<>();
         } else {
-            return itemService.search(text).stream().map(ItemMapper::toDto).collect(Collectors.toList());
+            return itemService.search(text, from, size).stream().map(ItemMapper::toDto).collect(Collectors.toList());
         }
     }
 
     @PostMapping(value = "/{itemId}/comment")
-    public CommentResponseDto saveComment(@PathVariable("itemId") @NotNull Long itemId, @Valid @RequestBody CommentMessageDto dto, @RequestHeader(HEADER_REQUEST)
+    public CommentResponseDto saveComment(@PathVariable() @NotNull Long itemId, @Valid @RequestBody CommentMessageDto dto, @RequestHeader(HEADER_REQUEST)
     long idUser) {
         Comment comment = CommentMapper.toEntity(dto);
         comment = itemService.saveComment(comment, idUser, itemId);

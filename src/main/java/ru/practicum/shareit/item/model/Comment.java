@@ -31,5 +31,5 @@ public class Comment extends BaseModel<Long> {
     User author;
 
     @Column(name = "created_date")
-    private LocalDateTime created;
+    LocalDateTime created;
 }
